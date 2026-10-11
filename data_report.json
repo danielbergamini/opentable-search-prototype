@@ -1,0 +1,44 @@
+{
+  "records_written": 5000,
+  "orphans_dropped": 0,
+  "bad_geo_dropped": 0,
+  "bad_rating_dropped": 0,
+  "raw_food_types": 114,
+  "cuisine_groups": 107,
+  "names_with_multiple_locations": 23,
+  "global_mean_rating": 4.294,
+  "top_cuisines": {
+    "American": 1514,
+    "Italian": 850,
+    "Steakhouse": 484,
+    "Seafood": 267,
+    "Japanese": 207,
+    "French": 167,
+    "Mexican": 126,
+    "Californian": 96,
+    "Mediterranean": 85,
+    "Spanish / Tapas": 84,
+    "International": 68,
+    "Indian": 65,
+    "Asian": 61,
+    "Gastro Pub": 51,
+    "Greek": 42
+  },
+  "price_range_vs_price_crosstab": {
+    "$30 and under": {
+      "2": 3053,
+      "3": 70,
+      "4": 2
+    },
+    "$31 to $50": {
+      "2": 100,
+      "3": 1450,
+      "4": 17
+    },
+    "$50 and over": {
+      "2": 6,
+      "3": 25,
+      "4": 277
+    }
+  }
+}

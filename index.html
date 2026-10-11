@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Find a table | OpenTable discovery prototype</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Instrument+Sans:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header class="top">
+      <div class="top__inner">
+        <p class="brand">Table Finder <span class="brand__sub">a search and discovery prototype for OpenTable</span></p>
+
+        <h1 class="top__title">What are you hungry for?</h1>
+        <div id="autocomplete" class="top__search"></div>
+
+        <div class="where" role="group" aria-label="Search location">
+          <span class="where__label" id="loc-label">Locating you…</span>
+          <label class="visually-hidden" for="loc-city">Choose a city</label>
+          <select id="loc-city" class="where__select"></select>
+          <button type="button" id="loc-gps" class="btn btn--ghost">Use my location</button>
+        </div>
+      </div>
+    </header>
+
+    <nav class="cuisines" aria-label="Browse by cuisine">
+      <div id="cuisine-chips"></div>
+    </nav>
+
+    <main class="layout">
+      <aside class="filters" aria-label="Filters">
+        <section class="filters__group">
+          <h2>Price</h2>
+          <div id="price-filter"></div>
+        </section>
+        <section class="filters__group">
+          <h2>Rating</h2>
+          <div id="rating-filter"></div>
+        </section>
+        <section class="filters__group">
+          <h2>Dining style</h2>
+          <div id="style-filter"></div>
+        </section>
+        <section class="filters__group">
+          <h2>Neighborhood</h2>
+          <div id="neighborhood-filter"></div>
+        </section>
+        <section class="filters__group">
+          <h2>Payment</h2>
+          <div id="payment-filter"></div>
+        </section>
+      </aside>
+
+      <section class="results" aria-label="Results">
+        <div class="results__bar">
+          <div id="stats"></div>
+          <div id="sort"></div>
+        </div>
+        <div class="results__applied">
+          <div id="current-refinements"></div>
+          <div id="clear-refinements"></div>
+        </div>
+        <div id="hits"></div>
+      </section>
+
+      <aside class="map-wrap" aria-label="Map">
+        <div class="map-wrap__sticky">
+          <div id="map" role="application" aria-label="Map of results"></div>
+          <button type="button" id="map-search-area" class="btn map__btn" hidden>Search this area</button>
+          <button type="button" id="map-clear" class="btn btn--ghost map__btn" hidden>Clear map area</button>
+        </div>
+      </aside>
+    </main>
+
+    <script type="module" src="/main.js"></script>
+  </body>
+</html>

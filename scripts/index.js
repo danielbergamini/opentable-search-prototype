@@ -51,7 +51,7 @@ const settings = {
 
   // Typo tolerance (explicit so it can be explained in the debrief).
   typoTolerance: true,
-  minWordSizefor1Typo: 4, // "itallian" (8) gets 2 typos; "sushi" (5) gets 1
+  minWordSizefor1Typo: 4, // "itallian" (8) gets 1 typos; "sushi" (5) gets 1
   minWordSizefor2Typos: 8,
   disableTypoToleranceOnAttributes: ["address"], // street numbers/names: typos cause false matches
 
@@ -59,6 +59,7 @@ const settings = {
   queryLanguages: ["en"],
   ignorePlurals: true,
   removeStopWords: true, // "the" / "and" in "the capital grille" or "bar and grill"
+  removeWordsIfNoResults: "firstWords", // "cheap italian" has no match, so drop "cheap" and retry
 
   // Performance / payload
   attributesToRetrieve: [
@@ -114,8 +115,10 @@ await index
   )
   .wait();
 
-console.log("Replacing records...");
-await index.clearObjects().wait(); // keeps settings, synonyms and rules
-const res = await index.saveObjects(records, { autoGenerateObjectIDIfNotExist: false }).wait();
-console.log(`Indexed ${records.length} records (${res.objectIDs.length} objectIDs)`);
+if (!process.argv.includes("--settings-only")) {
+  console.log("Replacing records...");
+  await index.clearObjects().wait();
+  const res = await index.saveObjects(records, { autoGenerateObjectIDIfNotExist: false }).wait();
+  console.log(`Indexed ${records.length} records (${res.objectIDs.length} objectIDs)`);
+}
 console.log("Done.");

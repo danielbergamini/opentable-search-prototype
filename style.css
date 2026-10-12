@@ -40,6 +40,11 @@ p {
   margin: 0;
 }
 
+/* .btn sets display, which would otherwise override the HTML hidden attribute */
+[hidden] {
+  display: none !important;
+}
+
 .visually-hidden {
   position: absolute;
   width: 1px;

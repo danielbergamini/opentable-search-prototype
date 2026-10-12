@@ -59,7 +59,15 @@ citySelect.innerHTML =
   '<option value="">Pick a city</option>' +
   CITIES.map((c, i) => `<option value="${i}">${c.label}</option>`).join("");
 
-function geoParams() {
+// "Search this area" state: a bounding box string (north,east,south,west) or null.
+let areaBox = null;
+
+function geoParams({ forSuggestions = false } = {}) {
+  // When the user searches the map area, use ONLY the bounding box. Mixing it with aroundLatLng
+  // in one request made the box unreliable, so inside the box we rank by relevance + quality.
+  if (areaBox && !forSuggestions) {
+    return { getRankingInfo: true, insideBoundingBox: areaBox };
+  }
   const base = {
     getRankingInfo: true,
     aroundRadius: "all", // never exclude far results; rank by distance instead
@@ -86,13 +94,19 @@ const search = instantsearch({
 });
 
 let geoConfig = configure({ hitsPerPage: 12, ...geoParams() });
-let boundsConfig = null; // "Search this area" (insideBoundingBox)
 
-function applyLocation(next) {
-  loc = next;
+function refreshGeoConfig() {
   search.removeWidgets([geoConfig]);
   geoConfig = configure({ hitsPerPage: 12, ...geoParams() });
   search.addWidgets([geoConfig]);
+}
+
+function applyLocation(next) {
+  loc = next;
+  areaBox = null; // choosing a new location leaves any map-area search
+  areaBtn.hidden = true;
+  clearBtn.hidden = true;
+  refreshGeoConfig();
   renderLocation();
 }
 
@@ -178,7 +192,7 @@ const ac = autocomplete({
                   hitsPerPage: 6,
                   attributesToRetrieve: ["name", "cuisine", "neighborhood", "city", "state"],
                   attributesToHighlight: ["name"],
-                  ...geoParams(),
+                  ...geoParams({ forSuggestions: true }),
                 },
               },
             ],
@@ -372,21 +386,18 @@ const areaBtn = document.getElementById("map-search-area");
 const clearBtn = document.getElementById("map-clear");
 
 function clearMapArea() {
-  if (!boundsConfig) return;
-  search.removeWidgets([boundsConfig]);
-  boundsConfig = null;
+  if (!areaBox) return;
+  areaBox = null;
+  refreshGeoConfig();
   areaBtn.hidden = true;
   clearBtn.hidden = true;
 }
 
 areaBtn.addEventListener("click", () => {
   const b = map.getBounds();
-  if (boundsConfig) search.removeWidgets([boundsConfig]);
-  // insideBoundingBox format: lat1,lng1,lat2,lng2 (north-east, south-west)
-  boundsConfig = configure({
-    insideBoundingBox: `${b.getNorth()},${b.getEast()},${b.getSouth()},${b.getWest()}`,
-  });
-  search.addWidgets([boundsConfig]);
+  // insideBoundingBox format: lat1,lng1,lat2,lng2 (north-east corner, south-west corner)
+  areaBox = `${b.getNorth()},${b.getEast()},${b.getSouth()},${b.getWest()}`;
+  refreshGeoConfig();
   areaBtn.hidden = true;
   clearBtn.hidden = false;
 });
@@ -424,7 +435,7 @@ const mapWidget = connectInfiniteHits((renderOptions, isFirstRender) => {
   });
 
   // Re-fit only when a fresh result set arrives and the user isn't pinned to a map area.
-  if (isFirstPage && points.length && !boundsConfig) {
+  if (isFirstPage && points.length && !areaBox) {
     programmatic = true;
     map.fitBounds(points, { padding: [30, 30], maxZoom: 14, animate: false });
     programmatic = false;
